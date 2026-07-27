@@ -8,6 +8,11 @@ export async function seedAdminUser(): Promise<void> {
   try {
     const existingAdmin = await Admin.findOne({ email: config.adminEmail.toLowerCase() });
     if (!existingAdmin) {
+      if (!config.adminPassword) {
+        throw new Error(
+          'ADMIN_SEED_PASSWORD or ADMIN_PASSWORD environment variable is required to seed admin user. Refusing startup without explicit password configuration.'
+        );
+      }
       console.log(`Seeding initial admin account: ${config.adminEmail}`);
       const hashedPassword = await bcrypt.hash(config.adminPassword, 10);
       await Admin.create({
@@ -18,6 +23,7 @@ export async function seedAdminUser(): Promise<void> {
     }
   } catch (error) {
     console.error('Error seeding admin user:', error);
+    throw error;
   }
 }
 

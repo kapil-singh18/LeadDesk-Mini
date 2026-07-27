@@ -16,6 +16,10 @@ export async function createLead(input: CreateLeadInput) {
   return newLead.toJSON();
 }
 
+function escapeRegex(input: string): string {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export async function getLeads(params: GetLeadsParams) {
   const page = Math.max(1, params.page || 1);
   const limit = Math.max(1, Math.min(100, params.limit || 10));
@@ -24,7 +28,8 @@ export async function getLeads(params: GetLeadsParams) {
   const query: Record<string, any> = {};
 
   if (params.search && params.search.trim()) {
-    const searchRegex = new RegExp(params.search.trim(), 'i');
+    const escapedSearch = escapeRegex(params.search.trim());
+    const searchRegex = new RegExp(escapedSearch, 'i');
     query.$or = [{ name: searchRegex }, { email: searchRegex }, { message: searchRegex }];
   }
 
