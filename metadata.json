@@ -1,0 +1,6 @@
+{
+  "name": "LeadDesk Mini",
+  "description": "A small Lead Management System with marketing landing page and admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
