@@ -94,7 +94,7 @@ PORT=3000
 MONGODB_URI=mongodb://localhost:27017/leaddesk-mini
 JWT_SECRET=your-super-secret-jwt-key
 ADMIN_EMAIL=admin@leaddesk.com
-ADMIN_SEED_PASSWORD=SuperSecureAdminPassword2026!
+ADMIN_SEED_PASSWORD=LeadDesk@Admin
 NODE_ENV=development
 ```
 
@@ -165,7 +165,7 @@ npm test
   ```json
   {
     "email": "admin@leaddesk.com",
-    "password": "StrongAdminPassword2026!"
+    "password": "LeadDesk@Admin"
   }
   ```
 - **Success Response (200 OK)**:

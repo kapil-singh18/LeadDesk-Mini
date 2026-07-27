@@ -31,7 +31,7 @@ export const LoginPage: React.FC = () => {
 
   const handleFillDemoCredentials = () => {
     setValue('email', 'admin@leaddesk.com', { shouldValidate: true });
-    setValue('password', 'admin123', { shouldValidate: true });
+    setValue('password', 'LeadDesk@Admin', { shouldValidate: true });
     setServerError(null);
   };
 
@@ -95,7 +95,7 @@ export const LoginPage: React.FC = () => {
                   Email: <code className="bg-white px-1.5 py-0.5 rounded border border-gray-200">admin@leaddesk.com</code>
                 </p>
                 <p className="text-gray-600">
-                  Password: <code className="bg-white px-1.5 py-0.5 rounded border border-gray-200">admin123</code>
+                  Password: <code className="bg-white px-1.5 py-0.5 rounded border border-gray-200">LeadDesk@Admin</code>
                 </p>
               </div>
               <button

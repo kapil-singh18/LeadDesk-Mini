@@ -13,6 +13,8 @@ const app = createExpressApp();
 
 beforeAll(async () => {
   // Set test environment variables
+  process.env.NODE_ENV = 'test';
+  config.nodeEnv = 'test';
   config.adminPassword = 'testAdminPassword123!';
   config.jwtSecret = 'test-jwt-secret-key-12345';
 

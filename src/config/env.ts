@@ -8,5 +8,6 @@ export const config = {
   jwtExpiresIn: '24h',
   adminEmail: process.env.ADMIN_EMAIL || 'admin@leaddesk.com',
   adminPassword: process.env.ADMIN_SEED_PASSWORD || process.env.ADMIN_PASSWORD || '',
+  clientOrigin: process.env.CLIENT_ORIGIN || '',
   nodeEnv: process.env.NODE_ENV || 'development',
 };

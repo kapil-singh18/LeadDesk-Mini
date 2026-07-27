@@ -6,20 +6,29 @@ import { LoginInput } from '../validators/authValidator.js';
 
 export async function seedAdminUser(): Promise<void> {
   try {
-    const existingAdmin = await Admin.findOne({ email: config.adminEmail.toLowerCase() });
+    const adminEmail = config.adminEmail.toLowerCase();
+    const adminPassword = config.adminPassword;
+
+    if (!adminPassword) {
+      throw new Error(
+        'ADMIN_SEED_PASSWORD or ADMIN_PASSWORD environment variable is required to seed admin user. Refusing startup without explicit password configuration.'
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    const existingAdmin = await Admin.findOne({ email: adminEmail });
+
     if (!existingAdmin) {
-      if (!config.adminPassword) {
-        throw new Error(
-          'ADMIN_SEED_PASSWORD or ADMIN_PASSWORD environment variable is required to seed admin user. Refusing startup without explicit password configuration.'
-        );
-      }
-      console.log(`Seeding initial admin account: ${config.adminEmail}`);
-      const hashedPassword = await bcrypt.hash(config.adminPassword, 10);
+      console.log(`Seeding initial admin account: ${adminEmail}`);
       await Admin.create({
-        email: config.adminEmail.toLowerCase(),
+        email: adminEmail,
         password: hashedPassword,
       });
       console.log('Admin account seeded successfully.');
+    } else {
+      existingAdmin.password = hashedPassword;
+      await existingAdmin.save();
+      console.log(`Updated seed password for admin account: ${adminEmail}`);
     }
   } catch (error) {
     console.error('Error seeding admin user:', error);
