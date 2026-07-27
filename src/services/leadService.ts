@@ -70,7 +70,7 @@ export async function updateLeadStatus(id: string, status: LeadStatus) {
   const updatedLead = await Lead.findByIdAndUpdate(
     id,
     { status },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!updatedLead) {
