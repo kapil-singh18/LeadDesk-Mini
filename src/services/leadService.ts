@@ -37,7 +37,6 @@ export async function getLeads(params: GetLeadsParams) {
     Lead.countDocuments(query),
   ]);
 
-  // Also fetch summary counts across all status categories for dashboard badges
   const [totalAll, totalNew, totalContacted, totalClosed] = await Promise.all([
     Lead.countDocuments({}),
     Lead.countDocuments({ status: 'New' }),
