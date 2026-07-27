@@ -22,53 +22,59 @@ LeadDesk Mini is an enterprise-grade full-stack Lead Intake & Management Portal 
 
 ---
 
+## 📁 Standard Monorepo Folder Structure
+
+```
+LeadDesk-Mini/
+├── frontend/                  # React 19 + Vite SPA Frontend
+│   ├── src/
+│   │   ├── components/        # UI, Auth, Layout, and Landing components
+│   │   ├── pages/             # Landing, Login, Dashboard, NotFound pages
+│   │   ├── services/          # Axios API clients (api.ts, authApiClient.ts, leadApiClient.ts)
+│   │   ├── types/             # Frontend TypeScript definitions
+│   │   └── utils/             # Frontend utility functions
+│   ├── public/                # Static public assets
+│   ├── .env.example           # Frontend environment variable reference
+│   ├── vercel.json            # Vercel SPA rewrite configuration
+│   ├── package.json           # Frontend dependencies
+│   ├── tsconfig.json          # Frontend TypeScript configuration
+│   └── vite.config.ts         # Vite build configuration
+│
+├── backend/                   # Express + Mongoose Node.js API Backend
+│   ├── src/
+│   │   ├── config/            # Environment config (env.ts) and DB connector (db.ts)
+│   │   ├── controllers/       # Auth and Lead Express route controllers
+│   │   ├── models/            # Mongoose schemas (Admin, Lead)
+│   │   ├── middlewares/       # JWT auth middleware, Zod validation, rate-limiter, error handling
+│   │   ├── routes/            # Express router definitions (/api/auth, /api/leads)
+│   │   ├── services/          # Auth and Lead database services
+│   │   ├── utils/             # API envelope response utils & JWT generators
+│   │   ├── validators/        # Zod validation schemas
+│   │   └── server.ts          # Server entrypoint
+│   ├── tests/                 # Vitest + Supertest integration & unit test suite
+│   ├── .env.example           # Backend environment variable reference
+│   ├── render.yaml            # Render deployment configuration
+│   ├── package.json           # Backend dependencies
+│   └── tsconfig.json          # Backend TypeScript configuration
+│
+├── README.md                  # Project overview and deployment guide
+├── .gitignore                 # Root gitignore for both frontend and backend
+├── LICENSE                    # MIT License
+└── package.json               # Root monorepo orchestrator
+```
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19, Vite, TypeScript, React Router v7, Tailwind CSS v4, Lucide React, React Hook Form, Zod, Axios.
-- **Backend**: Node.js, Express, Mongoose (MongoDB), JWT (`jsonwebtoken`), `bcryptjs`.
-- **Testing & Quality Assurance**: Vitest, Supertest, MongoDB Memory Server (`mongodb-memory-server`), TypeScript compiler check (`tsc --noEmit`).
+- **Backend**: Node.js, Express, Mongoose (MongoDB), JWT (`jsonwebtoken`), `bcryptjs`, `helmet`, `express-rate-limit`.
+- **Testing & Quality Assurance**: Vitest, Supertest, MongoDB Memory Server (`mongodb-memory-server`), TypeScript check (`tsc --noEmit`).
 - **Deployment**: Render (Backend Web Service), Vercel (Frontend SPA), MongoDB Atlas (Cloud Database).
 
 ---
 
-## 📁 Folder Structure
-
-```
-.
-├── dist/                      # Compiled production assets & server bundle (dist/server.cjs)
-├── public/                    # Static public assets
-├── src/
-│   ├── app.ts                 # Express app factory (used in production & unit/integration testing)
-│   ├── components/            # Reusable UI components
-│   │   ├── auth/              # ProtectedRoute guard
-│   │   ├── landing/           # Hero, Features, LeadFormSection
-│   │   ├── layout/            # Navbar, Footer
-│   │   └── ui/                # Button, Input, Textarea, Badge, Card
-│   ├── config/                # Environment configuration & MongoDB database connector
-│   ├── controllers/           # Auth and Lead Express route controllers
-│   ├── middlewares/           # JWT auth middleware, Zod validator middleware, error handler
-│   ├── models/                # Mongoose schemas (Admin, Lead)
-│   ├── pages/                 # LandingPage, LoginPage, DashboardPage, NotFoundPage
-│   ├── routes/                # Express API router definitions (/api/auth, /api/leads)
-│   ├── services/              # Auth, Lead service logic & client API wrappers
-│   ├── types/                 # Shared TypeScript interfaces & types
-│   ├── utils/                 # API envelope response utils & JWT generators
-│   └── validators/            # Zod validation schemas (leadValidator, authValidator)
-├── tests/                     # Integration and unit test suite (Vitest + Supertest)
-│   ├── api.test.ts            # API endpoint integration tests
-│   └── validators.test.ts     # Zod schema validation unit tests
-├── .env.example               # Environment variables template
-├── metadata.json              # Platform metadata
-├── package.json               # Dependencies and scripts
-├── render.yaml                # Render deployment configuration
-├── server.ts                  # Server entrypoint (Express + Vite dev middleware)
-├── vercel.json                # Vercel deployment & rewrite configuration
-└── vite.config.ts             # Vite build configuration
-```
-
----
-
-## ⚡ Local Setup & Installation
+## ⚡ Local Setup & Commands
 
 ### Prerequisites
 - Node.js >= 18.x
@@ -83,20 +89,8 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-
-Set required variables inside `.env`:
-```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/leaddesk-mini
-JWT_SECRET=your-super-secret-jwt-key
-ADMIN_EMAIL=admin@leaddesk.com
-ADMIN_SEED_PASSWORD=LeadDesk@Admin
-NODE_ENV=development
-```
+- **Backend**: Copy `backend/.env.example` to `.env` in backend or workspace root.
+- **Frontend**: Copy `frontend/.env.example` to `frontend/.env`.
 
 ### 3. Run Development Server
 ```bash
@@ -104,176 +98,42 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 4. Run Test Suite
+### 4. Run Build & Test Commands
 ```bash
+# Run tests (backend test suite)
 npm test
+
+# Build both frontend and backend
+npm run build
+
+# Run TypeScript lint check
+npm run lint
 ```
 
 ---
 
-## 🔑 Environment Variables Reference
+## 🚀 Deployment Steps & Order
 
-| Variable | Description | Required | Default / Example |
-| :--- | :--- | :--- | :--- |
-| `PORT` | HTTP server port | Yes | `3000` |
-| `MONGODB_URI` | MongoDB connection string | Yes | `mongodb+srv://user:pass@cluster.mongodb.net/leaddesk` |
-| `JWT_SECRET` | Secret key used to sign and verify JWT tokens | Yes | `a-long-random-secret-key` |
-| `ADMIN_EMAIL` | Initial seeded admin account email | Yes | `admin@leaddesk.com` |
-| `ADMIN_SEED_PASSWORD` | Password used to seed initial admin account | Yes (No fallback) | `StrongAdminPassword2026!` |
-| `NODE_ENV` | Application environment (`development` / `production`) | No | `development` |
+1. **MongoDB Atlas**:
+   - Create cluster, database user, and whitelist IP access (`0.0.0.0/0`).
+   - Copy connection URI (`mongodb+srv://user:pass@cluster.mongodb.net/leaddesk`).
 
----
+2. **Render Backend Deployment**:
+   - Create Web Service pointing to `backend/` directory (`rootDir: backend`).
+   - Set env vars in Render Dashboard:
+     - `MONGODB_URI`: `<Atlas Connection String>`
+     - `JWT_SECRET`: `<Secure Random 64-char String>`
+     - `ADMIN_EMAIL`: `admin@leaddesk.com`
+     - `ADMIN_SEED_PASSWORD`: `LeadDesk@Admin`
+     - `NODE_ENV`: `production`
+     - `CLIENT_ORIGIN`: `https://leaddesk-mini.vercel.app`
+   - Copy live backend URL (e.g. `https://leaddesk-mini-backend.onrender.com`).
 
-## 📡 API Endpoints Reference
+3. **Vercel Frontend Deployment**:
+   - Connect repo to Vercel and set **Root Directory** to `frontend/`.
+   - Set environment variable in Vercel Dashboard:
+     - `VITE_API_BASE_URL`: `https://leaddesk-mini-backend.onrender.com/api`
+   - Deploy and copy live frontend URL (e.g. `https://leaddesk-mini.vercel.app`).
 
-### Public Endpoints
-
-#### 1. Submit Lead
-- **Method**: `POST`
-- **Path**: `/api/leads`
-- **Auth**: None
-- **Request Body**:
-  ```json
-  {
-    "name": "Sarah Connor",
-    "email": "sarah@cyberdyne.com",
-    "budget": "$10k - $25k",
-    "message": "We need urgent security consulting for our automated defense network."
-  }
-  ```
-- **Success Response (201 Created)**:
-  ```json
-  {
-    "success": true,
-    "data": {
-      "id": "64f1a2b3c4d5e6f7a8b9c0d1",
-      "name": "Sarah Connor",
-      "email": "sarah@cyberdyne.com",
-      "budget": "$10k - $25k",
-      "message": "We need urgent security consulting for our automated defense network.",
-      "status": "New",
-      "createdAt": "2026-07-26T22:00:00.000Z"
-    }
-  }
-  ```
-
-#### 2. Admin Login
-- **Method**: `POST`
-- **Path**: `/api/auth/login`
-- **Auth**: None
-- **Request Body**:
-  ```json
-  {
-    "email": "admin@leaddesk.com",
-    "password": "LeadDesk@Admin"
-  }
-  ```
-- **Success Response (200 OK)**:
-  ```json
-  {
-    "success": true,
-    "data": {
-      "user": {
-        "id": "64f1a2b3c4d5e6f7a8b9c0d0",
-        "email": "admin@leaddesk.com"
-      },
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    }
-  }
-  ```
-
----
-
-### Protected Admin Endpoints (`Authorization: Bearer <token>`)
-
-#### 3. Get Paginated & Filtered Leads
-- **Method**: `GET`
-- **Path**: `/api/leads?search=security&status=New&page=1&limit=10`
-- **Auth**: Required (`Bearer <token>`)
-- **Success Response (200 OK)**:
-  ```json
-  {
-    "success": true,
-    "data": {
-      "leads": [ ... ],
-      "pagination": {
-        "total": 1,
-        "page": 1,
-        "limit": 10,
-        "totalPages": 1
-      },
-      "summary": {
-        "all": 10,
-        "new": 3,
-        "contacted": 5,
-        "closed": 2
-      }
-    }
-  }
-  ```
-
-#### 4. Update Lead Status
-- **Method**: `PATCH`
-- **Path**: `/api/leads/:id/status`
-- **Auth**: Required (`Bearer <token>`)
-- **Request Body**:
-  ```json
-  {
-    "status": "Contacted"
-  }
-  ```
-- **Success Response (200 OK)**:
-  ```json
-  {
-    "success": true,
-    "data": {
-      "id": "64f1a2b3c4d5e6f7a8b9c0d1",
-      "status": "Contacted",
-      "updatedAt": "2026-07-26T22:05:00.000Z"
-    }
-  }
-  ```
-
----
-
-## 🚀 Deployment Guide
-
-### 1. Database Setup (MongoDB Atlas)
-1. Create a free cluster on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-2. Create a Database User with read/write permissions.
-3. Whitelist `0.0.0.0/0` (or Render outbound IPs) under Network Access.
-4. Copy connection string URI (`mongodb+srv://<user>:<password>@cluster.mongodb.net/leaddesk`).
-
-### 2. Backend Deployment (Render)
-1. Connect your GitHub repository to [Render](https://render.com).
-2. Create a new **Web Service** using `render.yaml` or manually configure:
-   - **Environment**: Node
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
-3. Set Environment Variables in Render Dashboard:
-   - `MONGODB_URI`: `<your_atlas_connection_string>`
-   - `JWT_SECRET`: `<random_64_character_string>`
-   - `ADMIN_EMAIL`: `admin@leaddesk.com`
-   - `ADMIN_SEED_PASSWORD`: `<your_secure_admin_password>`
-   - `NODE_ENV`: `production`
-
-### 3. Frontend Deployment (Vercel)
-1. Connect repository to [Vercel](https://vercel.com).
-2. Deploy using `vercel.json` rewrite configuration pointing `/api/*` requests to your Render backend API domain (`https://leaddesk-mini-api.onrender.com`).
-
----
-
-## 🔮 Future Improvements & Production Hardening
-
-The following items are explicitly outside MVP scope but recommended for production readiness:
-
-1. **Rate Limiting on Public Lead Intake**:
-   - Implement `express-rate-limit` on `POST /api/leads` (e.g., max 5 submissions per IP per 15 minutes) to protect against spam bots and Denial of Service.
-2. **httpOnly Cookie Migration & Refresh Tokens**:
-   - Migrate JWT storage from `localStorage` to `httpOnly`, `SameSite=Strict`, `Secure` cookies to eliminate XSS token theft risks. Introduce short-lived access tokens (15 mins) paired with rotating refresh tokens stored in database.
-3. **Structured Logging & APM**:
-   - Integrate `winston` or `pino` for JSON-formatted structured logging, paired with Sentry for automatic exception tracking.
-4. **Input Size Limits & Request Payload Sanitization**:
-   - Enforce explicit byte limits on `express.json({ limit: '10kb' })` to prevent memory exhaustion attacks from massive payload injections.
-5. **Multi-Admin Role-Based Access Control (RBAC)**:
-   - Expand permissions model beyond single admin account to support team roles (`Viewer`, `Manager`, `SuperAdmin`) with audit logging.
+4. **Final Sync**:
+   - Verify `CLIENT_ORIGIN` in Render dashboard matches the live Vercel URL.

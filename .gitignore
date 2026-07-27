@@ -3,6 +3,17 @@ build/
 dist/
 coverage/
 .DS_Store
+Thumbs.db
 *.log
-.env*
+
+# Environment variables
+.env
+.env.local
+.env.*
 !.env.example
+
+# Build outputs in subfolders
+frontend/dist/
+frontend/build/
+backend/dist/
+backend/build/
