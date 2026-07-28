@@ -33,9 +33,9 @@ LeadDesk-Mini/
 │   │   ├── services/          # Axios API clients (api.ts, authApiClient.ts, leadApiClient.ts)
 │   │   ├── types/             # Frontend TypeScript definitions
 │   │   └── utils/             # Frontend utility functions
-│   ├── public/                # Static public assets
+│   ├── public/                # Favicons (favicon.svg, favicon.ico) and static public assets
 │   ├── .env.example           # Frontend environment variable reference
-│   ├── vercel.json            # Vercel SPA rewrite configuration
+│   ├── vercel.json            # Vercel SPA rewrite fallback configuration
 │   ├── package.json           # Frontend dependencies
 │   ├── tsconfig.json          # Frontend TypeScript configuration
 │   └── vite.config.ts         # Vite build configuration
@@ -49,11 +49,9 @@ LeadDesk-Mini/
 │   │   ├── routes/            # Express router definitions (/api/auth, /api/leads)
 │   │   ├── services/          # Auth and Lead database services
 │   │   ├── utils/             # API envelope response utils & JWT generators
-│   │   ├── validators/        # Zod validation schemas
-│   │   └── server.ts          # Server entrypoint
+│   │   └── server.ts          # Server entrypoint (serves API & static frontend)
 │   ├── tests/                 # Vitest + Supertest integration & unit test suite
 │   ├── .env.example           # Backend environment variable reference
-│   ├── render.yaml            # Render deployment configuration
 │   ├── package.json           # Backend dependencies
 │   └── tsconfig.json          # Backend TypeScript configuration
 │
@@ -70,7 +68,8 @@ LeadDesk-Mini/
 - **Frontend**: React 19, Vite, TypeScript, React Router v7, Tailwind CSS v4, Lucide React, React Hook Form, Zod, Axios.
 - **Backend**: Node.js, Express, Mongoose (MongoDB), JWT (`jsonwebtoken`), `bcryptjs`, `helmet`, `express-rate-limit`.
 - **Testing & Quality Assurance**: Vitest, Supertest, MongoDB Memory Server (`mongodb-memory-server`), TypeScript check (`tsc --noEmit`).
-- **Deployment**: Render (Backend Web Service), Vercel (Frontend SPA), MongoDB Atlas (Cloud Database).
+- **Primary Deployment**: AI Studio / Single Container Cloud Run (Single Express server serving both `/api/*` and static SPA build from `frontend/dist`).
+- **Legacy Deployment Fallbacks**: Vercel (`frontend/vercel.json` rewrite fallback) and Render.
 
 ---
 
@@ -89,8 +88,7 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
-- **Backend**: Copy `backend/.env.example` to `.env` in backend or workspace root.
-- **Frontend**: Copy `frontend/.env.example` to `frontend/.env`.
+Copy `.env.example` to `.env` in workspace root.
 
 ### 3. Run Development Server
 ```bash
@@ -100,7 +98,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### 4. Run Build & Test Commands
 ```bash
-# Run tests (backend test suite)
+# Run backend test suite
 npm test
 
 # Build both frontend and backend
@@ -108,32 +106,20 @@ npm run build
 
 # Run TypeScript lint check
 npm run lint
+
+# Start production server
+npm start
 ```
 
 ---
 
-## 🚀 Deployment Steps & Order
+## 🚀 Deployment via AI Studio (Single Cloud Run Service)
 
-1. **MongoDB Atlas**:
-   - Create cluster, database user, and whitelist IP access (`0.0.0.0/0`).
-   - Copy connection URI (`mongodb+srv://user:pass@cluster.mongodb.net/leaddesk`).
+AI Studio publishes the unified container running the Express backend, which serves both the `/api/*` endpoints and static frontend assets (`frontend/dist`) with SPA fallback.
 
-2. **Render Backend Deployment**:
-   - Create Web Service pointing to `backend/` directory (`rootDir: backend`).
-   - Set env vars in Render Dashboard:
-     - `MONGODB_URI`: `<Atlas Connection String>`
-     - `JWT_SECRET`: `<Secure Random 64-char String>`
-     - `ADMIN_EMAIL`: `admin@leaddesk.com`
-     - `ADMIN_SEED_PASSWORD`: `LeadDesk@Admin`
-     - `NODE_ENV`: `production`
-     - `CLIENT_ORIGIN`: `https://leaddesk-mini.vercel.app`
-   - Copy live backend URL (e.g. `https://leaddesk-mini-backend.onrender.com`).
-
-3. **Vercel Frontend Deployment**:
-   - Connect repo to Vercel and set **Root Directory** to `frontend/`.
-   - Set environment variable in Vercel Dashboard:
-     - `VITE_API_BASE_URL`: `https://leaddesk-mini-backend.onrender.com/api`
-   - Deploy and copy live frontend URL (e.g. `https://leaddesk-mini.vercel.app`).
-
-4. **Final Sync**:
-   - Verify `CLIENT_ORIGIN` in Render dashboard matches the live Vercel URL.
+### Environment Variables required before publishing:
+- `MONGODB_URI`: MongoDB Atlas connection string (or omit to fall back to in-memory database for preview/testing).
+- `JWT_SECRET`: Secret key used for signing JWT tokens.
+- `ADMIN_EMAIL`: Admin login email address (`admin@leaddesk.com`).
+- `ADMIN_SEED_PASSWORD`: Admin login password (`LeadDesk@Admin`).
+- `NODE_ENV`: `production`.

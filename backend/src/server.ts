@@ -17,23 +17,10 @@ async function startServer() {
   await connectDB();
   await seedAdminUser();
 
-  const frontendDir = path.resolve(__dirname, '../../frontend');
   const frontendDistPath = path.resolve(__dirname, '../../frontend/dist');
 
-  // Integrated dev mode / static frontend serving if running locally or in AI Studio container
-  if (config.nodeEnv !== 'production' && fs.existsSync(frontendDir)) {
-    try {
-      const { createServer: createViteServer } = await import('vite');
-      const vite = await createViteServer({
-        root: frontendDir,
-        server: { middlewareMode: true },
-        appType: 'spa',
-      });
-      app.use(vite.middlewares);
-    } catch (e) {
-      console.log('Vite middleware skipped in backend standalone mode.');
-    }
-  } else if (fs.existsSync(frontendDistPath)) {
+  // Serve static frontend files if production build exists; otherwise return API status info
+  if (fs.existsSync(frontendDistPath)) {
     app.use(express.static(frontendDistPath));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(frontendDistPath, 'index.html'));

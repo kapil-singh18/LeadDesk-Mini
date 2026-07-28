@@ -15,7 +15,7 @@ export function validateBody(schema: ZodSchema) {
           const path = err.path.join('.');
           formattedErrors[path || 'form'] = err.message;
         });
-        sendError(res, { message: 'Validation failed', fields: formattedErrors }, 422);
+        sendError(res, { message: 'Validation failed', fields: formattedErrors }, 400);
         return;
       }
       next(error);
